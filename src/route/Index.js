@@ -113,7 +113,8 @@ import Payment from '../pages/payment'
 import Residential from '../pages/residential'
 import UserLoan from '../pages/userLoan'
 import OfferBanner from '../pages/offerBanner'
-import JobType from '../pages/jobType'
+import JobType from '../pages/jobType';
+import UserLoanEmi from "../pages/userLoan/emi";
 
 const Pages = () => {
   useLayoutEffect(() => {
@@ -228,6 +229,17 @@ const Pages = () => {
           render={() => (
             <UserContextProvider>
               <UserLoan />
+            </UserContextProvider>
+          )}
+        >
+        </Route>
+
+        <Route //Context Api added
+          exact
+          path={`${process.env.PUBLIC_URL}/loan-emi/:id`}
+          render={() => (
+            <UserContextProvider>
+              <UserLoanEmi />
             </UserContextProvider>
           )}
         >

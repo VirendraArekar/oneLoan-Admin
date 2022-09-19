@@ -1,0 +1,26 @@
+.box{
+    font-size: 18px;
+    font-weight: bold;
+    margin : 3px;
+    padding : 10px;
+    border : 1px solid grey;
+    background-color: white;
+    border-radius: 10px;
+}
+
+.box-alt{
+    font-size: 18px;
+    font-weight: bold;
+    margin-top : 20px;
+    padding : 20px;
+    border : 1px solid grey;
+    background-color: #00052D;
+    color : white;
+    border-radius: 10px;
+}
+
+.box-alt:hover{
+    background-color: white;
+    color : #00052D;
+    cursor: pointer;
+}

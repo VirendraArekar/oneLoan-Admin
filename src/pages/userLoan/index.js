@@ -40,6 +40,8 @@ import { UserContext } from "../pre-built/user-manage/UserContext";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { BASE_URL } from "../../utils/Constant";
+import { loanShortAddress } from "../../utils/Helper";
+import { putAPI } from "../../nework";
 
 
 const UserLoan = () => {
@@ -139,8 +141,8 @@ const UserLoan = () => {
         item.checked = false;
         return item
     })
-
-    console.log(data)
+    console.log('Api REsponse ---------------------------')
+    console.log(response.data)
     setData([...data]);
    }
    else{
@@ -558,6 +560,15 @@ const UserLoan = () => {
       }
   }
 
+  const loanApproved = async(approved, id) => {
+    console.log('Approved----', approved === true ? 'TRUE' : 'FALSE')
+    let data = await putAPI(`user-loan/approval/${id}`, {approved : approved})
+    if(data){
+      loadTypeData()
+    }
+    console.log('Approved', id);
+  }
+
   // Change Page
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
@@ -696,7 +707,7 @@ const UserLoan = () => {
             </div>
             <DataTableBody compact>
               <DataTableHead>
-                <DataTableRow className="nk-tb-col-check">
+                <DataTableRow className="nk-tb-col-check ">
                   <div className="custom-control custom-control-sm custom-checkbox notext">
                     <input
                       type="checkbox"
@@ -707,9 +718,9 @@ const UserLoan = () => {
                     <label className="custom-control-label" htmlFor="uid"></label>
                   </div>
                 </DataTableRow>
-                <DataTableRow>
+                {/* <DataTableRow>
                   <span className="sub-text">ID</span>
-                </DataTableRow>
+                </DataTableRow> */}
                 <DataTableRow>
                   <span className="sub-text">User</span>
                 </DataTableRow>
@@ -733,6 +744,10 @@ const UserLoan = () => {
                 </DataTableRow>
                 <DataTableRow>
                   <span className="sub-text">Address</span>
+                </DataTableRow>
+
+                <DataTableRow size="md">
+                  <span className="sub-text text-center">Status</span>
                 </DataTableRow>
                 <DataTableRow size="md">
                   <span className="sub-text">Created At</span>
@@ -761,20 +776,20 @@ const UserLoan = () => {
                             <label className="custom-control-label" htmlFor={item._id + "uid1"}></label>
                           </div>
                         </DataTableRow>
-                        <DataTableRow size="md">
+                        {/* <DataTableRow size="md">
                           <span>{item._id}</span>
-                        </DataTableRow>
+                        </DataTableRow> */}
                         <DataTableRow>
                           <Link to={`${process.env.PUBLIC_URL}/user-details-regular/${item._id}`}>
                             <div className="user-card">
-                              <UserAvatar
+                              {/* <UserAvatar
                                 theme={item.avatarBg}
                                 className="xs"
-                                text={findUpper(item?.user?.firstName + ' ' + item?.user?.lastName)}
+                                text={item.user.firstName != null ? findUpper(item?.user?.firstName + ' ' + item?.user?.lastName) : 'NA'}
                                 image={''}
-                              ></UserAvatar>
+                              ></UserAvatar> */}
                               <div className="user-info">
-                                <span className="tb-lead">{item?.user?.firstName + ' ' + item?.user?.lastName} </span>
+                                <span className="tb-lead badge badge-primary text-light">{item.user.firstName != null ? item?.user?.firstName + ' ' + item?.user?.lastName : 'NA'} </span>
                               </div>
                             </div>
                           </Link>
@@ -798,7 +813,12 @@ const UserLoan = () => {
                           <span>{item.residentialType.name}</span>
                         </DataTableRow>
                         <DataTableRow size="md">
-                          <span>{`House No - ${item.loanAddress.houseNo} Landmark - ${item.loanAddress.landmark} Locality - ${item.loanAddress.locality} Pincode - ${item.loanAddress.pincode} City - ${item.loanAddress.city}`}</span>
+                          <span>{loanShortAddress(item.loanAddress)}</span>
+                        </DataTableRow>
+                        <DataTableRow size="md">
+                          <div className="text-center">
+                          <span className={`badge ${item.approved ? 'badge-success' : 'badge-warning'} p-1`}>{item.approved ? 'Approved' : 'Disapproved'}</span>
+                          </div>
                         </DataTableRow>
                         <DataTableRow size="md">
                           <span>{new Date(item.createdAt).toDateString()}</span>
@@ -833,8 +853,36 @@ const UserLoan = () => {
                                         <Icon name="edit"></Icon>
                                         <span>Edit</span>
                                       </DropdownItem>
+                                      
                                     </li>
-                                   
+                                    <li>
+                                      <DropdownItem
+                                        tag="a"
+                                        href={`/loan-emi/${item._id}`}
+                                        // onClick={(ev) => {
+                                        //   ev.preventDefault();
+                                        // }}
+                                      >
+                                        <Icon name="building"></Icon>
+                                        <span>View EMI</span>
+                                      </DropdownItem>
+                                      
+                                    </li>
+                                    {
+                                      !item.approved &&
+                                      <li onClick={() => loanApproved(item.approved ? false :  true,item._id)}>
+                                        <DropdownItem
+                                          tag="a"
+                                          href="#"
+                                          onClick={(ev) => {
+                                            ev.preventDefault();
+                                          }}
+                                        >
+                                          <Icon name="check"></Icon>
+                                          <span>{item.approved ? 'Disapproved' : 'Approved'}</span>
+                                        </DropdownItem>
+                                      </li>
+                                    }
                                   </ul>
                                 </DropdownMenu>
                               </UncontrolledDropdown>
